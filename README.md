@@ -14,6 +14,19 @@ Receiver 2 Quality of Life Fixes
 - Remove 'Tap W to sprint'
 - Enable/Disable each fix individually
 
+# Setup
+
+## Install
+
+1. Download `Wolfire.Receiver2.dll` from the releases tab in this repository.
+2. Drop the downloaded DLL into `\SteamLibrary\steamapps\common\Receiver 2\Receiver2_Data\Managed\` replacing the original file.
+
+To uninstall the mod simply ask for Steam to check the files on the game's property panel.
+
+## Compiling
+
+To generate this DLL yourself first you need to download [dnSpy](https://github.com/0xd4d/dnSpy), decompile the game's `Wolfire.Receiver2.dll` and apply the patch file to the decompiled sources. After that use 'Save Module' to generate a new DLL replacing the game's original one.
+
 # Game notes
 
 There's unused code included in the game indicating that some of these features were prototyped, scrapped or planned for a future release.
