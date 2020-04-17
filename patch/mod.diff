@@ -1,0 +1,24 @@
+Only in gamesrc/Wolfire.Receiver2: bin
+Only in gamesrc/Wolfire.Receiver2: obj
+diff -r '--exclude=*.csproj' '--exclude=*.sln' gamesrc/Wolfire.Receiver2/Receiver2/LocalAimHandler.cs modsrc/Wolfire.Receiver2/Receiver2/LocalAimHandler.cs
+5121,5140d5120
+< 			bool flag = true;
+< 			if (this.GetHandWithState(LocalAimHandler.Hand.State.HoldingGun) != -1 && this.holster_danger_start_time < Time.time - 0.2f)
+< 			{
+< 				flag = false;
+< 			}
+< 			if ((!gun.HasHammer() || gun.hammer.amount >= 0.2f) && UnityEngine.Random.Range(0f, 1f) <= odds)
+< 			{
+< 				if (flag)
+< 				{
+< 					this.shot_self_reason = CauseOfDeath.HolsterDischarge;
+< 				}
+< 				else
+< 				{
+< 					this.shot_self_reason = CauseOfDeath.None;
+< 				}
+< 				gun.SetAnalogTriggerPressure(1f);
+< 				gun.Update();
+< 				gun.SetAnalogTriggerPressure(0f);
+< 				this.shot_self_reason = CauseOfDeath.None;
+< 			}
