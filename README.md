@@ -18,7 +18,7 @@ Receiver 2 Quality of Life Fixes
 
 ## Install
 
-1. Download `Wolfire.Receiver2.dll` from the releases tab in this repository.
+1. **DOWNLOAD** `Wolfire.Receiver2.dll` from the [**releases tab**](https://github.com/aBARICHELLO/receiver2-qol-fixes/releases/) in this repository.
 2. Drop the downloaded DLL into `\SteamLibrary\steamapps\common\Receiver 2\Receiver2_Data\Managed\` replacing the original file.
 
 To uninstall the mod simply ask for Steam to check the files on the game's property panel.
