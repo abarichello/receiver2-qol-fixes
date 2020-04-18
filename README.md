@@ -8,11 +8,7 @@ Receiver 2 Quality of Life Fixes
 
 - Disable 'accidentally shooting leg when fast holstering' mechanic.
 - Remove demoting of ranks on death.
-
-## Planned features
-
 - Remove 'Tap W to sprint'
-- Enable/Disable each fix individually
 
 # Setup
 
