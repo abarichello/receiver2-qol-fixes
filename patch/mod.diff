@@ -22,3 +22,190 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' gamesrc/Wolfire.Receiver2/Receive
 < 				gun.SetAnalogTriggerPressure(0f);
 < 				this.shot_self_reason = CauseOfDeath.None;
 < 			}
+6383c6363
+< 				if (this.forward_input_delay < 0.4f && !this.noclip && (!this.crouching || this.on_ladder != null) && this.aim_spring.target_state != 1f)
+---
+> 				if (!this.noclip && (!this.crouching || this.on_ladder != null) && this.aim_spring.target_state != 1f)
+6392c6372
+< 				if (this.forward_input_delay > 0.4f)
+---
+> 				if (!this.character_input.GetButton(65))
+diff -r '--exclude=*.csproj' '--exclude=*.sln' gamesrc/Wolfire.Receiver2/Receiver2/RankingProgressionGameMode.cs modsrc/Wolfire.Receiver2/Receiver2/RankingProgressionGameMode.cs
+494c494
+< 			if (this.game_running)
+---
+> 			checked
+496c496
+< 				if (this.rcs.PlayerInitialized && !this.player_dead && !this.player_won && !this.player_ranked_up)
+---
+> 				if (this.game_running)
+498c498
+< 					if (this.rcs.player.player_object.GetComponent<LocalAimHandler>().IsFullyDead())
+---
+> 					if (this.rcs.PlayerInitialized && !this.player_dead && !this.player_won && !this.player_ranked_up)
+500,508c500,504
+< 						this.player_dead = true;
+< 					}
+< 					if (this.rcs.player.player_object.GetComponent<LocalAimHandler>().IsFullyWon())
+< 					{
+< 						this.player_won = true;
+< 					}
+< 					if (this.rcs.player.player_object.GetComponent<LocalAimHandler>().IsFullyRanked())
+< 					{
+< 						if (this.progression_data.receiver_rank + 1 >= this.campaign.ranks.Count)
+---
+> 						if (this.rcs.player.player_object.GetComponent<LocalAimHandler>().IsFullyDead())
+> 						{
+> 							this.player_dead = true;
+> 						}
+> 						if (this.rcs.player.player_object.GetComponent<LocalAimHandler>().IsFullyWon())
+512c508
+< 						else
+---
+> 						if (this.rcs.player.player_object.GetComponent<LocalAimHandler>().IsFullyRanked())
+514c510,517
+< 							this.player_ranked_up = true;
+---
+> 							if (this.progression_data.receiver_rank + 1 >= this.campaign.ranks.Count)
+> 							{
+> 								this.player_won = true;
+> 							}
+> 							else
+> 							{
+> 								this.player_ranked_up = true;
+> 							}
+517,525c520,530
+< 				}
+< 				if (this.player_dead)
+< 				{
+< 					this.game_running = false;
+< 					this.rcs.active_player_data.death_count++;
+< 					this.rcs.active_player_data.historic_rank_statistics.Add(this.rcs.active_player_data.rank_statistics);
+< 					this.rcs.active_player_data.RecordPlayerStatistic(StatisticCategory.GameLostFromDeath, 1);
+< 					int receiver_rank = this.progression_data.receiver_rank;
+< 					if (this.progression_data.receiver_rank > 1)
+---
+> 					if (this.player_dead)
+> 					{
+> 						this.game_running = false;
+> 						this.rcs.active_player_data.death_count++;
+> 						this.rcs.active_player_data.historic_rank_statistics.Add(this.rcs.active_player_data.rank_statistics);
+> 						this.rcs.active_player_data.RecordPlayerStatistic(StatisticCategory.GameLostFromDeath, 1);
+> 						RankingProgressionGameMode.DisplayDeathInfo(this.rcs.active_player_data.session_data.death_info.cause_of_death);
+> 						this.rcs.StoreEndGame(false, true);
+> 						this.click_to_continue = true;
+> 					}
+> 					if (this.player_won)
+526a532,545
+> 						this.game_running = false;
+> 						this.rcs.active_player_data.historic_rank_statistics.Add(this.rcs.active_player_data.rank_statistics);
+> 						this.rcs.active_player_data.win_count++;
+> 						this.rcs.active_player_data.RecordPlayerStatistic(StatisticCategory.GameWon, 1);
+> 						this.rcs.StoreEndGame(true, false);
+> 						this.rcs.Restart(true, true);
+> 					}
+> 					if (this.player_ranked_up)
+> 					{
+> 						if (this.progression_data.receiver_rank == 0)
+> 						{
+> 							this.rcs.active_player_data.finished_intro = true;
+> 						}
+> 						this.progression_data.has_picked_up_mindcontrol_tape = false;
+528c547,553
+< 						this.progression_data.receiver_rank--;
+---
+> 						this.game_running = false;
+> 						this.progression_data.receiver_rank++;
+> 						this.prev_loadout = this.rcs.player.lah.GetCurrentLoadout();
+> 						this.prev_loadout.transform.parent = base.transform;
+> 						this.rcs.active_player_data.historic_rank_statistics.Add(this.rcs.active_player_data.rank_statistics);
+> 						this.rcs.StoreEndGame(false, false);
+> 						ReceiverEvents.TriggerEvent(ReceiverEventTypeInt.WorldEventRankUp, this.progression_data.receiver_rank);
+530c555
+< 						string uistring = Locale.GetUIString(this.GetReceiverRankName(this.progression_data.receiver_rank));
+---
+> 						string uistring2 = Locale.GetUIString(this.GetReceiverRankName(this.progression_data.receiver_rank));
+532c557
+< 						PlayerGUI.Instance.RankChangeScreen.SetMainText(Locale.FormatUIString(LocaleUIString.RS_DEMOTED, new object[]
+---
+> 						PlayerGUI.Instance.RankChangeScreen.SetMainText(Locale.FormatUIString(LocaleUIString.RS_PROMOTED, new object[]
+534c559
+< 							uistring
+---
+> 							uistring2
+536,538d560
+< 						string hurtInfoString = PlayerInfoMessages.GetHurtInfoString(this.rcs.active_player_data.session_data.death_info.cause_of_death);
+< 						string deathInfoString = PlayerInfoMessages.GetDeathInfoString(this.rcs.active_player_data.session_data.death_info.cause_of_death);
+< 						PlayerGUI.Instance.RankChangeScreen.SetSecondaryText(deathInfoString + "\n" + hurtInfoString);
+540,544c562,563
+< 						PlayerGUI.Instance.RankChangeScreen.OnRankChange(this.progression_data.receiver_rank, receiver_rank);
+< 					}
+< 					else
+< 					{
+< 						RankingProgressionGameMode.DisplayDeathInfo(this.rcs.active_player_data.session_data.death_info.cause_of_death);
+---
+> 						PlayerGUI.Instance.RankChangeScreen.OnRankChange(this.progression_data.receiver_rank, this.progression_data.receiver_rank - 1);
+> 						this.click_to_continue = true;
+546,547d564
+< 					this.rcs.StoreEndGame(false, true);
+< 					this.click_to_continue = true;
+549c566
+< 				if (this.player_won)
+---
+> 				if (this.load_rank_level)
+551,556c568,572
+< 					this.game_running = false;
+< 					this.rcs.active_player_data.historic_rank_statistics.Add(this.rcs.active_player_data.rank_statistics);
+< 					this.rcs.active_player_data.win_count++;
+< 					this.rcs.active_player_data.RecordPlayerStatistic(StatisticCategory.GameWon, 1);
+< 					this.rcs.StoreEndGame(true, false);
+< 					this.rcs.Restart(true, true);
+---
+> 					this.UpdateData();
+> 					ValueTuple<string, bool> receiverRankConfiguration = this.GetReceiverRankConfiguration(this.progression_data.receiver_rank);
+> 					ReceiverCoreScript.Instance().SetWorldGenerationConfiguration(receiverRankConfiguration.Item1, receiverRankConfiguration.Item2);
+> 					this.rcs.FadeAndLoad(ReceiverCoreScript.Instance().WorldGenerationConfiguration.level_name);
+> 					this.load_rank_level = false;
+558c574
+< 				if (this.player_ranked_up)
+---
+> 				if (this.click_to_continue)
+560,582c576
+< 					if (this.progression_data.receiver_rank == 0)
+< 					{
+< 						this.rcs.active_player_data.finished_intro = true;
+< 					}
+< 					this.progression_data.has_picked_up_mindcontrol_tape = false;
+< 					PlayerGUI.Instance.RankChangeScreen.ResetState(this.progression_data.receiver_rank);
+< 					this.game_running = false;
+< 					this.progression_data.receiver_rank++;
+< 					this.prev_loadout = this.rcs.player.lah.GetCurrentLoadout();
+< 					this.prev_loadout.transform.parent = base.transform;
+< 					this.rcs.active_player_data.historic_rank_statistics.Add(this.rcs.active_player_data.rank_statistics);
+< 					this.rcs.StoreEndGame(false, false);
+< 					ReceiverEvents.TriggerEvent(ReceiverEventTypeInt.WorldEventRankUp, this.progression_data.receiver_rank);
+< 					ReceiverOnScreenMessage.Instance.ClearMessageQueue();
+< 					string uistring2 = Locale.GetUIString(this.GetReceiverRankName(this.progression_data.receiver_rank));
+< 					this.EvaluateNextLoadout();
+< 					PlayerGUI.Instance.RankChangeScreen.SetMainText(Locale.FormatUIString(LocaleUIString.RS_PROMOTED, new object[]
+< 					{
+< 						uistring2
+< 					}));
+< 					PlayerGUI.Instance.RankChangeScreen.SetGunModel(this.next_loadout.gun);
+< 					PlayerGUI.Instance.RankChangeScreen.OnRankChange(this.progression_data.receiver_rank, this.progression_data.receiver_rank - 1);
+< 					this.click_to_continue = true;
+---
+> 					this.UpdateEndGameDead();
+584,595d577
+< 			}
+< 			if (this.load_rank_level)
+< 			{
+< 				this.UpdateData();
+< 				ValueTuple<string, bool> receiverRankConfiguration = this.GetReceiverRankConfiguration(this.progression_data.receiver_rank);
+< 				ReceiverCoreScript.Instance().SetWorldGenerationConfiguration(receiverRankConfiguration.Item1, receiverRankConfiguration.Item2);
+< 				this.rcs.FadeAndLoad(ReceiverCoreScript.Instance().WorldGenerationConfiguration.level_name);
+< 				this.load_rank_level = false;
+< 			}
+< 			if (this.click_to_continue)
+< 			{
+< 				this.UpdateEndGameDead();

@@ -7,10 +7,10 @@ Receiver 2 Quality of Life Fixes
 ## Current features
 
 - Disable 'accidentally shooting leg when fast holstering' mechanic.
+- Remove demoting of ranks on death.
 
 ## Planned features
 
-- Remove demoting of ranks
 - Remove 'Tap W to sprint'
 - Enable/Disable each fix individually
 
@@ -33,5 +33,14 @@ There's unused code included in the game indicating that some of these features 
 
 - Agents with randomized male and female names
 - Difficulty settings
+- VR Support
 - Gun attachments
-- Different types of robot (sniper/sneak/etc)
+- A handheld tape player
+- Different types of robots:
+  - sniper
+  - sneak
+  - bomb
+  - camera
+  - ceiling turret
+  - power leech
+- Boss fights (gunship)
